@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Article {
+  id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title          String
+  titleSlug      String          @map("title_slug")
+  content        String
+  userId         String          @map("user_id") @db.Uuid
+  createdAt      DateTime?       @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt      DateTime?       @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  user           User            @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_article_user_id")
+  articleComment ArticleComment?
+
+  @@map("article")
+}
+
+model ArticleComment {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  content   String    @db.VarChar(255)
+  articeId  String    @map("article_id") @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  article   Article   @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_article_comment_article_id")
+  user      User      @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_article_comment_user_id")
+
+  @@map("article_comment")
+}
+
+model User {
+  id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fullName       String          @map("full_name")
+  email          String
+  password       String
+  role           String
+  createdAt      DateTime?       @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt      DateTime?       @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  article        Article?
+  articleComment ArticleComment?
+
+  @@map("user")
+}
