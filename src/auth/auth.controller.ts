@@ -9,7 +9,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ResponseWeb } from 'src/interface/response.interface';
 import { LoginUserDto, UserResponse } from 'src/model/user.model';
 import { AuthService } from './auth.service';
 import { Public } from 'src/common/public.decorator';
@@ -25,27 +24,11 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   @ApiOperation({ summary: 'Login User' })
-  async login(
-    @Body() userDto: LoginUserDto,
-  ): Promise<ResponseWeb<UserResponse>> {
+  async login(@Body() userDto: LoginUserDto): Promise<UserResponse> {
     try {
-      const result = await this.authService.login(userDto);
-      const response: ResponseWeb<UserResponse> = {
-        status: 'success',
-        statusCode: 200,
-        message: 'Success login',
-        data: result,
-      };
-
-      return response;
+      return await this.authService.login(userDto);
     } catch (error) {
-      const response: ResponseWeb<UserResponse> = {
-        status: 'failed',
-        statusCode: error.status,
-        message: error.message,
-        data: null,
-      };
-      throw response;
+      throw error;
     }
   }
 
@@ -55,22 +38,9 @@ export class AuthController {
   @Roles('user')
   getProfile(@Request() req) {
     try {
-      const response: ResponseWeb<UserResponse> = {
-        status: 'success',
-        statusCode: 200,
-        message: 'Success get profile',
-        data: req.user,
-      };
-
-      return response;
+      return req.user;
     } catch (error) {
-      const response: ResponseWeb<UserResponse> = {
-        status: 'failed',
-        statusCode: error.status,
-        message: error.message,
-        data: null,
-      };
-      throw response;
+      throw error;
     }
   }
 }

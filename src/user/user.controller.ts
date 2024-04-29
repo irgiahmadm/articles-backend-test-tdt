@@ -4,41 +4,25 @@ import { CreateUserDto, UserResponse } from 'src/model/user.model';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ResponseWeb } from 'src/interface/response.interface';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Public } from 'src/common/public.decorator';
 
 @ApiTags('User')
 @Controller('v1/user')
 export class UserController {
   constructor(private userService: UserService) {}
 
+  @Public()
   @Post('register')
   @ApiOperation({ summary: 'Create Member' })
-  async register(
-    @Body() userDto: CreateUserDto,
-  ): Promise<ResponseWeb<UserResponse>> {
-    const result = await this.userService.register(userDto);
-    const response: ResponseWeb<UserResponse> = {
-      status: 'success',
-      statusCode: 200,
-      message: 'Success retrieve user data',
-      data: result,
-    };
-
-    return response;
+  async register(@Body() userDto: CreateUserDto): Promise<UserResponse> {
+    return await this.userService.register(userDto);
   }
 
   @Post('bulk-register')
   async registerBulk(
     @Body() usersDto: CreateUserDto[],
-  ): Promise<ResponseWeb<UserResponse[]>> {
-    const result = await this.userService.bulkRegister(usersDto);
-    const response: ResponseWeb<UserResponse[]> = {
-      status: 'success',
-      statusCode: 200,
-      message: 'Success retrieve user data',
-      data: result,
-    };
-
-    return response;
+  ): Promise<UserResponse[]> {
+    return await this.userService.bulkRegister(usersDto);
   }
 
   @UseGuards(AuthGuard)

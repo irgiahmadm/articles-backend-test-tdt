@@ -46,7 +46,7 @@ export class UserService {
       };
       return userResponse;
     } catch (error) {
-      throw new HttpException(error, 500);
+      throw error;
     }
   }
 
@@ -105,7 +105,7 @@ export class UserService {
       return userResponses;
     } catch (error) {
       console.log(error);
-      throw new HttpException(error, 500);
+      throw error;
     }
   }
 }
