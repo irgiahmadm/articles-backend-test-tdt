@@ -14,7 +14,7 @@ import { ZodError } from 'zod';
 export class ResponseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     return next.handle().pipe(
-      map((res: unknown) => this.responseHandler(res, context)),
+      map((res: any) => this.responseHandler(res, context)),
       catchError((error) =>
         throwError(() => this.errorHandler(error, context)),
       ),
@@ -26,31 +26,29 @@ export class ResponseInterceptor implements NestInterceptor {
     const response = ctx.getResponse();
     const request = ctx.getRequest();
 
-    if (!response.headersSent) {
-      if (error instanceof ZodError) {
-        const errorMessage = error.errors
-          .map((e) => `${e.path.join('.')} attribute: ${e.message}`)
-          .join(', ');
-        response.status(HttpStatus.BAD_REQUEST).json({
-          status: false,
-          statusCode: HttpStatus.BAD_REQUEST,
-          path: request.url,
-          message: errorMessage,
-          data: null,
-        });
-      } else if (error instanceof HttpException) {
-        response.status(error.getStatus()).json({
-          status: false,
-          statusCode: error.getStatus(),
-          path: request.url,
-          message: error.message,
-          data: null,
-        });
-      }
+    if (error instanceof ZodError) {
+      const errorMessage = error.errors
+        .map((e) => `${e.path.join('.')} attribute: ${e.message}`)
+        .join(', ');
+      response.status(HttpStatus.BAD_REQUEST).json({
+        status: false,
+        statusCode: HttpStatus.BAD_REQUEST,
+        path: request.url,
+        message: errorMessage,
+        data: null,
+      });
+    } else if (error instanceof HttpException) {
+      response.status(error.getStatus()).json({
+        status: false,
+        statusCode: error.getStatus(),
+        path: request.url,
+        message: error.message,
+        data: null,
+      });
     }
   }
 
-  responseHandler(res: any, context: ExecutionContext) {
+  responseHandler(data: any, context: ExecutionContext) {
     const ctx = context.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
@@ -61,7 +59,7 @@ export class ResponseInterceptor implements NestInterceptor {
       status: true,
       path: request.url,
       statusCode,
-      data: res,
+      data: data, // Return the data directly without nesting it within the response object
     };
   }
 }
