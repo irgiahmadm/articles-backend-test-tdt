@@ -37,7 +37,7 @@ After installing the package run this command
 ```bash
 $ npx prisma init
 ```
-choose postgre. The `.env` file will created the `DATABASE_URL` key, set it with your postgre database URL. Add another key to .env called `JWT_SECRET` fill it with random string
+choose postgre. The `.env` file will created the `DATABASE_URL` key, set it with your postgre database URL. Add another key to `.env` called `JWT_SECRET` fill it with random string
 
 ## Setup database
 After setup the `.env ` you can run this command to make the database schema
