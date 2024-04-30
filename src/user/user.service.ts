@@ -1,4 +1,9 @@
-import { HttpException, Inject, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { PrismaService } from 'src/common/prisma.service';
 import { ValidationService } from 'src/common/validation.service';
@@ -34,6 +39,7 @@ export class UserService {
 
       createUser.password = await bcrypt.hash(createUser.password, 10);
 
+      console.log(createUser);
       const data = await this.prismaService.user.create({
         data: createUser,
       });
@@ -50,46 +56,64 @@ export class UserService {
     }
   }
 
-  async bulkRegister(usersDto: CreateUserDto[]): Promise<UserResponse[]> {
+  async findById(id: string): Promise<UserResponse | null> {
     try {
-      const userResponses: UserResponse[] = [];
+      const user = await this.prismaService.user.findUnique({
+        where: { id },
+      });
 
-      for (const userDto of usersDto) {
-        this.logger.info(`Register new bulk user ${JSON.stringify(userDto)}`);
+      if (!user) throw new NotFoundException();
 
-        const createUser: CreateUserDto = this.validationService.validate(
-          UserValidation.REGISTER,
-          userDto,
-        );
+      const userResponse: UserResponse = {
+        id: user.id,
+        email: user.email,
+        fullName: user.fullName,
+        role: user.role,
+      };
 
-        // Check if user already exists
-        const existMember = await this.prismaService.user.count({
-          where: { email: createUser.email },
-        });
-
-        if (existMember !== 0) {
-          throw new HttpException('User already exists', 400);
-        }
-
-        createUser.password = await bcrypt.hash(createUser.password, 10);
-
-        const data = await this.prismaService.user.create({
-          data: createUser,
-        });
-
-        const userResponse: UserResponse = {
-          id: data.id,
-          email: data.email,
-          fullName: data.fullName,
-          role: data.role,
-        };
-
-        userResponses.push(userResponse);
-      }
-
-      return userResponses;
+      return userResponse;
     } catch (error) {
-      throw new HttpException(error, 500);
+      throw error;
+    }
+  }
+
+  async update(
+    id: string,
+    updateUserDto: Partial<CreateUserDto>,
+  ): Promise<UserResponse | null> {
+    try {
+      const existingUser = await this.prismaService.user.findUnique({
+        where: { id },
+      });
+
+      if (!existingUser) return null;
+
+      const updatedUser = await this.prismaService.user.update({
+        where: { id },
+        data: updateUserDto,
+      });
+
+      const userResponse: UserResponse = {
+        id: updatedUser.id,
+        email: updatedUser.email,
+        fullName: updatedUser.fullName,
+        role: updatedUser.role,
+      };
+
+      return userResponse;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async remove(id: string): Promise<boolean> {
+    try {
+      await this.prismaService.user.delete({
+        where: { id },
+      });
+      return true;
+    } catch (error) {
+      throw error;
     }
   }
 

@@ -11,7 +11,7 @@ export class CreateUserDto {
   password: string;
 
   @ApiProperty()
-  role: string;
+  role?: string;
 }
 
 export class LoginUserDto {
@@ -26,6 +26,6 @@ export class UserResponse {
   id?: string;
   fullName: string;
   email: string;
-  role: string;
+  role?: string;
   accessToken?: string;
 }

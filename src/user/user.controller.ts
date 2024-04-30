@@ -1,9 +1,15 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Param,
+  Put,
+  Delete,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto, UserResponse } from 'src/model/user.model';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ResponseWeb } from 'src/interface/response.interface';
-import { AuthGuard } from 'src/auth/auth.guard';
 import { Public } from 'src/common/public.decorator';
 
 @ApiTags('User')
@@ -13,29 +19,42 @@ export class UserController {
 
   @Public()
   @Post('register')
-  @ApiOperation({ summary: 'Create Member' })
+  @ApiOperation({ summary: 'Create User' })
   async register(@Body() userDto: CreateUserDto): Promise<UserResponse> {
     return await this.userService.register(userDto);
   }
 
-  @Post('bulk-register')
-  async registerBulk(
-    @Body() usersDto: CreateUserDto[],
-  ): Promise<UserResponse[]> {
-    return await this.userService.bulkRegister(usersDto);
+  @Post('create')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create User' })
+  async create(@Body() userDto: CreateUserDto): Promise<UserResponse> {
+    return await this.userService.register(userDto);
   }
 
-  @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @Get()
-  async fetchAll(): Promise<ResponseWeb<UserResponse[]>> {
-    const userResponse = await this.userService.fetchAll();
-    const response: ResponseWeb<UserResponse[]> = {
-      status: 'success',
-      statusCode: 200,
-      message: 'Success get list of users',
-      data: userResponse,
-    };
-    return response;
+  async fetchAll(): Promise<UserResponse[]> {
+    return await this.userService.fetchAll();
+  }
+
+  @ApiBearerAuth()
+  @Get(':id')
+  async findById(@Param('id') id: string): Promise<UserResponse | null> {
+    return await this.userService.findById(id);
+  }
+
+  @ApiBearerAuth()
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateUserDto: Partial<CreateUserDto>,
+  ): Promise<UserResponse | null> {
+    return await this.userService.update(id, updateUserDto);
+  }
+
+  @ApiBearerAuth()
+  @Delete(':id')
+  async remove(@Param('id') id: string): Promise<boolean> {
+    return await this.userService.remove(id);
   }
 }
