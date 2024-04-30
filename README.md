@@ -32,6 +32,21 @@
 $ npm install
 ```
 
+## Setup `.env`
+After installing the package run this command
+```bash
+$ npx prisma init
+```
+choose postgre. The `.env` file will created the `DATABASE_URL` key, set it with your postgre database URL. Add another key to .env called `JWT_SECRET` fill it with random string
+
+## Setup database
+After setup the `.env ` you can run this command to make the database schema
+```bash
+$ npx prisma db push
+$ npx prisma generate
+```
+**make sure the `DATABASE_URL` are correct*
+
 ## Running the app
 
 ```bash
@@ -44,30 +59,9 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+## API Documentation
+After running the application you will see log to the API Docs Swagger on your local machine, or you can click this link 
+[API DOCS](http://[::1]:3000/docs) this url accessible after you run the application.
 
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
+## LICENSE
 Nest is [MIT licensed](LICENSE).
