@@ -11,6 +11,9 @@ export class ArticleDto {
 
   @ApiProperty()
   userId: string;
+
+  @ApiProperty()
+  categoryId: string;
 }
 
 export class ArticleResponse {

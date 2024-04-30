@@ -35,6 +35,7 @@ export class AuthController {
   @ApiBearerAuth()
   @Get('profile')
   @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('user')
   getProfile(@Request() req) {
     try {

@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { ArticlesModule } from './articles/articles.module';
 import { ArticleCommentModule } from './article-comment/article-comment.module';
 import { CommonModule } from './common/common.module';
+import { ArticleCategoryModule } from './article-category/article-category.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { CommonModule } from './common/common.module';
     UserModule,
     ArticlesModule,
     ArticleCommentModule,
+    ArticleCategoryModule,
     CommonModule,
   ],
   controllers: [AppController],

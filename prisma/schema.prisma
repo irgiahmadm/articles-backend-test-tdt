@@ -13,8 +13,9 @@ model Article {
   titleSlug       String?          @map("title_slug")
   content         String
   userId          String           @map("user_id") @db.Uuid
+  categoryId      String           @map("category_id") @db.Uuid
   createdAt       DateTime?        @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt       DateTime?        @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  updatedAt       DateTime?        @default(now()) @updatedAt @map("updated_at") @db.Time(6)
   user            User             @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_article_user_id")
   article_comment ArticleComment[]
 
@@ -45,4 +46,13 @@ model User {
   article_comment ArticleComment[]
 
   @@map("user")
+}
+
+model ArticleCategory {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String?
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  @@map("article_category")
 }

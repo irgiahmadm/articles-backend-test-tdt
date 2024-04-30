@@ -11,7 +11,7 @@ import { ArticleCommentService } from './article-comment.service';
 import {
   ArticleCommentDto,
   ArticleCommentResponse,
-} from 'src/model/article.comment';
+} from 'src/model/article-comment.model';
 import {
   ApiTags,
   ApiResponse,
@@ -21,7 +21,7 @@ import {
 import { Public } from 'src/common/public.decorator';
 
 @ApiTags('Article Comment')
-@Controller('article-comment')
+@Controller('v1/article-comment')
 export class ArticleCommentController {
   constructor(private articleCommentService: ArticleCommentService) {}
 

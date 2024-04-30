@@ -1,13 +1,14 @@
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { PrismaService } from 'src/common/prisma.service';
 import { ValidationService } from 'src/common/validation.service';
+import { Logger } from 'winston';
 
 import { ArticleCommentValidation } from './article-comment.validation';
 import {
   ArticleCommentDto,
   ArticleCommentResponse,
-} from 'src/model/article.comment';
+} from 'src/model/article-comment.model';
 
 @Injectable()
 export class ArticleCommentService {

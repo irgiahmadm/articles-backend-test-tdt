@@ -6,12 +6,14 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ArticleDto, ArticleResponse } from 'src/model/article.model';
 import { Roles } from 'src/common/roles.decorator';
 import { Public } from 'src/common/public.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
 
 @ApiTags('Article')
 @Controller('v1/article')
@@ -19,6 +21,7 @@ export class ArticlesController {
   constructor(private articleService: ArticlesService) {}
 
   @Post()
+  @UseGuards(RolesGuard)
   @Roles('admin')
   @ApiBearerAuth()
   async create(@Body() articleDto: ArticleDto): Promise<ArticleResponse> {
@@ -46,6 +49,7 @@ export class ArticlesController {
   }
 
   @Put(':id')
+  @UseGuards(RolesGuard)
   @Roles('admin')
   @ApiBearerAuth()
   async update(
@@ -56,6 +60,7 @@ export class ArticlesController {
   }
 
   @Delete(':id')
+  @UseGuards(RolesGuard)
   @Roles('admin')
   @ApiBearerAuth()
   async remove(@Param('id') id: string): Promise<boolean> {
